@@ -16,4 +16,8 @@ Smoothing Factor = 2
 ## Standard Deviation
 <img src = "https://user-images.githubusercontent.com/24922489/112774843-304dd280-8ff8-11eb-989f-7815a3873a75.png" width="200"/>
 
-## Maximum Drawdown
+## Average Daily Range
+
+Avg_daily_range = (Price_1 - Price_0 + Price_2 - Price_1 + Price_3 - Price_2 + ... + Price_t - Price_t-1) / n
+
+Avg_daily_range = (Price_t - Price_0) / n
