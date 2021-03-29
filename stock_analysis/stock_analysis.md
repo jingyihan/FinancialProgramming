@@ -13,5 +13,7 @@ EMA_t = Price_t * (Smoothing Factor/(1+Days)) +EMA_(t-1) * (1−(Smoothing/(1+Da
 where: EMA=Exponential moving average
 Smoothing Factor = 2
 
-## standard Deviation
+## Standard Deviation
+![image](https://user-images.githubusercontent.com/24922489/112774843-304dd280-8ff8-11eb-989f-7815a3873a75.png)
 
+## Maximum Drawdown
