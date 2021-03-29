@@ -14,6 +14,6 @@ where: EMA=Exponential moving average
 Smoothing Factor = 2
 
 ## Standard Deviation
-![image](https://user-images.githubusercontent.com/24922489/112774843-304dd280-8ff8-11eb-989f-7815a3873a75.png)
+<img src = "https://user-images.githubusercontent.com/24922489/112774843-304dd280-8ff8-11eb-989f-7815a3873a75.png" width="200"/>
 
 ## Maximum Drawdown
