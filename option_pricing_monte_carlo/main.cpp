@@ -60,7 +60,7 @@ class RandomWalk{
 
         }
 
-        double european_option(double ret, double std, double interest, double strike, int sim_n, string direction){
+        double european_option(double ret, double std, double strike, int sim_n, string direction){
 
             if (direction != "call" && direction != "put"){
                 return 0.0;
@@ -72,11 +72,10 @@ class RandomWalk{
             double current = m_start;
 
             for (int j=0; j<sim_n; j++){
-                prev = m_start;
+                current = m_start;
                 for (int i=0; i<m_nstep; i++){
                     double r = rand_normal(0,1);
-                    current = prev * exp(( ret - 0.5 * pow(std, 2) ) * dt + std * sqrt(dt) * r);
-                    prev = current;
+                    current = current * exp(( ret - 0.5 * pow(std, 2) ) * dt + std * sqrt(dt) * r);
                 }
 
                 if (direction == "call"){
@@ -92,47 +91,46 @@ class RandomWalk{
                 }
                 
             }
-            return (payoff/(sim_n*1.0))/exp(interest*m_time);
+            return (payoff/(sim_n*1.0))/exp(ret*m_time);
 
         }
 
-        double american_option(double ret, double std, double interest, double strike, int sim_n, string direction){
+        double asian_option(double ret, double std, double strike, int days, int sim_n, string direction){
 
             if (direction != "call" && direction != "put"){
                 return 0.0;
             }
-            double prev = m_start;
-
-            double dt = m_time/m_nstep;
+            double current = m_start;
+            double prices = 1;
+            double dt = m_time/(m_nstep*1.0);
             double payoff = 0;
 
             vector<double> payoffs;
 
             for (int j=0; j<sim_n; j++){
-                prev = m_start;
+                current = m_start;
+                prices = 1;
+                vector<double> payoffs;
                 for (int i=0; i<m_nstep; i++){
                     double r = rand_normal(0,1);
-                    double current = prev * exp(( ret - 0.5 * pow(std, 2) ) * dt + std * sqrt(dt) * r);
-                    prev = current;
+                    current = current * exp(( ret - 0.5 * pow(std, 2) ) * dt + std * sqrt(dt) * r);
 
-                    if (direction == "call"){
-                        if (current > strike){
-                            payoffs.push_back(current - strike);
-                        }
-                    }else if (direction == "put"){
-                        if (current < strike){
-                            payoffs.push_back(strike - current);
-                        }
+                    if (i >= m_nstep - days){
+                        prices *= current;
                     }
-                    
                 }
-                int n = payoffs.size();
-                if (n!=0){
-                    payoff += accumulate( payoffs.begin(), payoffs.end(), 0.0) / n; 
+
+                if (direction == "call"){
+                    prices = pow(prices, 1.0/days);
+                    payoff += max(prices-strike, 0.0);
+                }else if (direction == "put"){
+                    prices = pow(prices, 1.0/days);
+                    payoff += max(strike-prices, 0.0);
                 }
+
             }
 
-            return (payoff/(sim_n*1.0))/exp(interest*m_time);
+            return (payoff/(sim_n*1.0));
 
         }
 
@@ -143,26 +141,26 @@ class RandomWalk{
 };
 
 int main(){
-    RandomWalk genPrice(250, 100.0, 1.0);
+    RandomWalk genPrice(255, 100.0, 1.0);
 
     //monte carlo prices with Geometric Brownian Motion
     //vector<double> prices = genPrice.generate_price(0.1, 0.2);
 
     //european call
     string direction = "call";
-    double price_1 = genPrice.european_option(0.05, 0.2, 0.03, 100.0, 1000, direction);
+    double price_1 = genPrice.european_option(0.05, 0.2, 100.0, 5000, direction);
 
     //european call
     direction = "put";
-    double price_2 = genPrice.european_option(0.05, 0.2, 0.03, 100.0, 1000, direction);
+    double price_2 = genPrice.european_option(0.05, 0.2, 100.0, 5000, direction);
 
     //american call
     direction = "call";
-    double price_3 = genPrice.american_option(0.05, 0.2, 0.03, 100.0, 1000, direction);
+    double price_3 = genPrice.asian_option(0.05, 0.2, 100.0, 20, 5000, direction);
 
     //american put
     direction = "put";
-    double price_4 = genPrice.american_option(0.05, 0.2, 0.03, 100.0, 1000, direction);
+    double price_4 = genPrice.asian_option(0.05, 0.2, 100.0, 20, 5000, direction);
 
     //for (int i=0; i<prices.size(); i++){
     //    cout << "time step " << i << " : " << prices[i] << endl;
@@ -170,8 +168,8 @@ int main(){
 
     cout << "european option call: " << price_1 << endl;
     cout << "european option put: " << price_2 << endl;
-    cout << "american option call: " << price_3 << endl;
-    cout << "american option put: " << price_4 << endl;
+    cout << "asian option call: " << price_3 << endl;
+    cout << "asian option put: " << price_4 << endl;
 
     return 0;
 }
