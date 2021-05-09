@@ -335,10 +335,10 @@ class ShortestPath{
             int curr_cost = 0;
             bool initial_state = true;
             //if it is not initial_state and open set is empty, no path exists
-            cout << "check while loop: " << (open_set.get_size() != 0 || initial_state == true) << endl;
+            //cout << "check while loop: " << (open_set.get_size() != 0 || initial_state == true) << endl;
             while (open_set.get_size() != 0 || initial_state == true){
                 //if find end point, stop
-                cout << "check index：" << n.n_index << ", end index: " << w << endl;
+                //cout << "check index：" << n.n_index << ", end index: " << w << endl;
                 if (n.n_index == w){
                     min_path = n.n_ancestor;
                     min_cost = n.n_weight;
@@ -346,9 +346,8 @@ class ShortestPath{
                 }
                 initial_state = false;
                 //check neighbors and updating the open set
-                vector<int> neighbor_set = s_graph.neighbors(close_set[0]);
+                vector<int> neighbor_set = s_graph.neighbors(n.n_index);
                 for (int i = 0; i < neighbor_set.size(); ++i){
-                    cout << neighbor_set[i] << endl;
                     if (close_set[neighbor_set[i]] == 0){
                         //calculate the cost for neighbor given existing path
                         node neighbor(neighbor_set[i], s_graph.get_edge_value(u,neighbor_set[i])+curr_cost);
@@ -385,7 +384,8 @@ class ShortestPath{
 
 int main(){
     //seed random number generator to be different each time
-    srand (time(NULL)); 
+    //srand (time(NULL)); 
+    srand (12); 
     //Graph(int number of nodes, double degree, int max weight in a path)
     Graph rand_graph(5, 0.5, 5);
     rand_graph.print();
