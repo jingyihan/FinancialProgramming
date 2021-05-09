@@ -214,6 +214,7 @@ class PriorityQueue{
                         old_weight = queue[i].n_weight;
                         queue[i].n_weight = priority.n_weight;
                         queue_index = i;
+                        queue[i].n_ancestor = priority.n_ancestor;
                         break;
                     }
                 }
@@ -338,19 +339,15 @@ class ShortestPath{
             //cout << "check while loop: " << (open_set.get_size() != 0 || initial_state == true) << endl;
             while (open_set.get_size() != 0 || initial_state == true){
                 //if find end point, stop
-                //cout << "check index：" << n.n_index << ", end index: " << w << endl;
-                if (n.n_index == w){
-                    min_path = n.n_ancestor;
-                    min_cost = n.n_weight;
-                    break;
-                }
+                cout << "check index：" << n.n_index << ", end index: " << w << endl;
+
                 initial_state = false;
                 //check neighbors and updating the open set
                 vector<int> neighbor_set = s_graph.neighbors(n.n_index);
                 for (int i = 0; i < neighbor_set.size(); ++i){
                     if (close_set[neighbor_set[i]] == 0){
                         //calculate the cost for neighbor given existing path
-                        node neighbor(neighbor_set[i], s_graph.get_edge_value(u,neighbor_set[i])+curr_cost);
+                        node neighbor(neighbor_set[i], s_graph.get_edge_value(n.n_index,neighbor_set[i])+curr_cost);
                         //update open set
                         if (open_set.contains(neighbor)){
                             //if open set contains neighbor node
@@ -358,18 +355,19 @@ class ShortestPath{
                             node curr_node = open_set.get_element(neighbor.n_index);
                             if (curr_node.n_weight > neighbor.n_weight){
                                 //update ancestor list
-                                neighbor.n_ancestor.push_back(n.n_index);
                                 neighbor.n_ancestor.insert(neighbor.n_ancestor.end(), n.n_ancestor.begin(), n.n_ancestor.end());
+                                neighbor.n_ancestor.push_back(n.n_index);
                                 open_set.chgPrioirity(neighbor);
                             }
                         }else{ //if open set doesn't contains the neighbor node, add it to the set
                             //update ancestor list
-                            neighbor.n_ancestor.push_back(n.n_index);
                             neighbor.n_ancestor.insert(neighbor.n_ancestor.end(), n.n_ancestor.begin(), n.n_ancestor.end());
+                            neighbor.n_ancestor.push_back(n.n_index);
                             open_set.insert(neighbor);
                         }
                     }
                 }
+                open_set.print();
                 //pop the node with minimum cost
                 n = open_set.minPrioirty();
                 //mark the new node as visited
@@ -377,6 +375,11 @@ class ShortestPath{
                 //update to new cost
                 curr_cost = n.n_weight;
                 
+                if (n.n_index == w){
+                    min_path = n.n_ancestor;
+                    min_cost = n.n_weight;
+                    break;
+                }
             }
         }
 
