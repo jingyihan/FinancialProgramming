@@ -339,7 +339,7 @@ class ShortestPath{
             //cout << "check while loop: " << (open_set.get_size() != 0 || initial_state == true) << endl;
             while (open_set.get_size() != 0 || initial_state == true){
                 //if find end point, stop
-                cout << "check index：" << n.n_index << ", end index: " << w << endl;
+                //cout << "check index：" << n.n_index << ", end index: " << w << endl;
 
                 initial_state = false;
                 //check neighbors and updating the open set
@@ -367,7 +367,7 @@ class ShortestPath{
                         }
                     }
                 }
-                open_set.print();
+                //open_set.print();
                 //pop the node with minimum cost
                 n = open_set.minPrioirty();
                 //mark the new node as visited
@@ -385,17 +385,55 @@ class ShortestPath{
 
 };
 
+void single_test(int num_vertex, double density, int max_cost){
+    cout << "create a graph with number of vertexs: " << num_vertex << " density : " << density << " max cost: " << max_cost << endl;
+    //create graph
+    Graph rand_graph_single(num_vertex, density, max_cost);
+    rand_graph_single.print();
+    //create shortest path for Dijkstra's Algorithm
+    ShortestPath cal_path_single(rand_graph_single);
+    
+    vector<int> min_path_out = cal_path_single.path(0,rand_graph_single.V()-1);
+    for (int i = 0; i < min_path_out.size(); ++i){
+        cout << min_path_out[i] << " -> ";
+    }
+    cout << (rand_graph_single.V()-1) << endl;
+    cout << "minimum cost from 0 to " << rand_graph_single.V()-1 << " : " << cal_path_single.path_size(0,rand_graph_single.V()-1) << " " << endl;
+    cout << "" << endl;
+}
+
+void average_path_length(int num_vertex, double density, int max_cost){
+    cout << "create a graph with number of vertexs: " << num_vertex << " density : " << density << " max cost: " << max_cost << endl;
+    Graph rand_graph(num_vertex, density, max_cost);
+    ShortestPath cal_path(rand_graph);
+    int sum_path = 0;
+    int count_path = 0;
+    int min_path = 0;
+    for (int i = 1; i < 50; ++i){
+        min_path = cal_path.path_size(0,i);
+        sum_path += min_path;
+        if (min_path > 0){
+            count_path += 1;
+            vector<int> min_path_out = cal_path.path(0,i);
+            for (int j = 0; j < min_path_out.size(); ++j){
+                cout << min_path_out[j] << " -> ";
+            }
+            cout << i << endl;
+        }
+    }
+    cout << "average path length for graph with density " << density << ": " << static_cast<double>(sum_path)/count_path << endl;
+    cout << "" << endl;
+}
+
 int main(){
     //seed random number generator to be different each time
-    //srand (time(NULL)); 
-    srand (12); 
+    srand (time(NULL)); 
+    
+    //Single Run, With graph and path print out
     //Graph(int number of nodes, double degree, int max weight in a path)
-    Graph rand_graph(5, 0.5, 5);
-    rand_graph.print();
-    ShortestPath cal_path(rand_graph);
-    cout << cal_path.path_size(0,rand_graph.V()-1) << " " << endl;
-    vector<int> min_path_out = cal_path.path(0,rand_graph.V()-1);
-    for (int i = 0; i < min_path_out.size(); ++i){
-        cout << min_path_out[i] << " ";
-    }
+    single_test(8,0.5,5);
+
+    //calculate average min cost for graph with 50 vertex and density of 0.2 & 0.4 and maximum cost as 10
+    average_path_length(50, 0.2, 10);
+    average_path_length(50, 0.4, 10);
 }
