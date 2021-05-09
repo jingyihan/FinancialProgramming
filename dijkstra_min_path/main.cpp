@@ -335,10 +335,10 @@ class ShortestPath{
             int curr_cost = 0;
             bool initial_state = true;
             //if it is not initial_state and open set is empty, no path exists
-            cout << "check while loop: " (open_set.get_size() != 0 || initial_state == true) << endl;
+            cout << "check while loop: " << (open_set.get_size() != 0 || initial_state == true) << endl;
             while (open_set.get_size() != 0 || initial_state == true){
                 //if find end point, stop
-                cout << "check index： " 
+                cout << "check index：" << n.n_index << ", end index: " << w << endl;
                 if (n.n_index == w){
                     min_path = n.n_ancestor;
                     min_cost = n.n_weight;
