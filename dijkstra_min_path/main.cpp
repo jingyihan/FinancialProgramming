@@ -348,7 +348,8 @@ class ShortestPath{
                 //check neighbors and updating the open set
                 vector<int> neighbor_set = s_graph.neighbors(close_set[0]);
                 for (int i = 0; i < neighbor_set.size(); ++i){
-                    if (close_set[n.n_index] == 0){
+                    cout << neighbor_set[i] << endl;
+                    if (close_set[neighbor_set[i]] == 0){
                         //calculate the cost for neighbor given existing path
                         node neighbor(neighbor_set[i], s_graph.get_edge_value(u,neighbor_set[i])+curr_cost);
                         //update open set
