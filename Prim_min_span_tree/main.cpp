@@ -429,6 +429,80 @@ class ShortestPath{
 
 };
 
+class MST{
+    public:
+        //constructor
+        MST(Graph graph){
+            s_graph = graph;
+            min_tree.resize(s_graph.V(), vector<int>(s_graph.V(), 0));
+            min_cost = 0;
+        }
+
+        int get_cost(){
+            prim_mst();
+            return min_cost;
+        }
+
+        vector< vector<int> > get_tree(){
+            prim_mst();
+            return min_tree;
+        }
+
+        void print(){
+            for (int i = 0; i < min_tree.size(); ++i){
+                for (int j = 0; j < min_tree.size(); ++j){
+                    cout << " " << min_tree[i][j] << " ";
+                }
+                cout << "" << endl;
+            }
+        }
+
+    private:
+        vector< vector<int> > min_tree;
+        int min_cost;
+        Graph s_graph;
+
+        void prim_mst(){
+            vector<int> visited(s_graph.V(), 0);
+            PriorityQueue open_set(s_graph.V());
+            vector<int> close_set(s_graph.V(), 0);
+
+            //initialize starting position
+            node start_n(0, 0);
+            start_n.n_ancestor.push_back(0);
+            open_set.insert(start_n);
+
+            while (open_set.get_size() > 0){
+                //pop min graph node
+                node curr = open_set.minPrioirty();
+                //mark as visited 
+                visited[curr.n_index]=1;
+                min_cost += curr.n_weight;
+                min_tree[curr.n_ancestor[0]][curr.n_index] = curr.n_weight;
+                vector<int> neighbor_set = s_graph.neighbors(curr.n_index);
+
+                for (int ne: neighbor_set){
+                    if (visited[ne] == 0){
+                        node n(ne, s_graph.get_edge_value(curr.n_index, ne));
+                        if (open_set.contains(n)){
+                            node curr_node = open_set.get_element(n.n_index);
+                            if (curr_node.n_weight > n.n_weight){
+                                //update ancestor list
+                                n.n_ancestor.push_back(curr.n_index);
+                                open_set.chgPrioirity(n);
+                            }
+                        }else{ //if open set doesn't contains the neighbor node, add it to the set
+                            //update ancestor list
+                            n.n_ancestor.push_back(curr.n_index);
+                            open_set.insert(n);
+                        }
+                    }
+                }
+            }
+
+        }
+};
+
 void single_test(int num_vertex, double density, int max_cost){
     cout << "create a graph with number of vertexs: " << num_vertex << " density : " << density << " max cost: " << max_cost << endl;
     //create graph
@@ -469,10 +543,32 @@ void average_path_length(int num_vertex, double density, int max_cost){
     cout << "" << endl;
 }
 
+void input_file_test(string input){
+    Graph test_graph(input);
+    test_graph.print();
+
+    MST min_spanning_tree(test_graph);
+    cout << "the minimum cost of min spanning tree is : " << min_spanning_tree.get_cost() << endl;
+    min_spanning_tree.print();
+
+}
+
+void random_test(int num_vertex, double density, int max_cost){
+    cout << "create a graph with number of vertexs: " << num_vertex << " density : " << density << " max cost: " << max_cost << endl;
+    Graph test_graph(num_vertex, density, max_cost);
+    test_graph.print();
+
+    MST min_spanning_tree(test_graph);
+    cout << "the minimum cost of min spanning tree is : " << min_spanning_tree.get_cost() << endl;
+    min_spanning_tree.print();
+
+}
+
 int main(){
     //seed random number generator to be different each time
     //srand (time(NULL)); 
     
+    //HOMEWORK 2
     //Single Run, With graph and path print out
     //Graph(int number of nodes, double degree, int max weight in a path)
     //single_test(8,0.5,5);
@@ -481,17 +577,11 @@ int main(){
     //average_path_length(50, 0.2, 10);
     //average_path_length(50, 0.4, 10);
 
-    Graph test_graph("graph_data.txt");
-    test_graph.print();
+    //HOMEWORK 3
+    //use input file to initialize graph
+    input_file_test("graph_data.txt");
 
-    ShortestPath cal_path_single(test_graph);
-    
-    vector<int> min_path_out = cal_path_single.path(0,test_graph.V()-1);
-    for (int i = 0; i < min_path_out.size(); ++i){
-        cout << min_path_out[i] << " -> ";
-    }
-    cout << (test_graph.V()-1) << endl;
-    cout << "minimum cost from 0 to " << test_graph.V()-1 << " : " << cal_path_single.path_size(0,test_graph.V()-1) << " " << endl;
-    cout << "" << endl;
+    //randomly generated graph
+    random_test(8,0.5,5);
     
 }
