@@ -478,7 +478,7 @@ class MST{
                 //mark as visited 
                 visited[curr.n_index]=1;
                 min_cost += curr.n_weight;
-                min_tree[curr.n_ancestor[0]][curr.n_index] = curr.n_weight;
+                min_tree[curr.n_ancestor[0]][curr.n_index] = min_tree[curr.n_index][curr.n_ancestor[0]] = curr.n_weight;
                 vector<int> neighbor_set = s_graph.neighbors(curr.n_index);
 
                 for (int ne: neighbor_set){
