@@ -18,7 +18,8 @@
         "unordered_map": "cpp",
         "utility": "cpp",
         "algorithm": "cpp",
-        "istream": "cpp"
+        "istream": "cpp",
+        "ostream": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
